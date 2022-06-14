@@ -72,10 +72,16 @@ public class AuthController {
 
     @GetMapping("/getTeachers")
     public HttpEntity<List<User>> getUsers(){
-        List<User> users = authService.getUsers();
-        return ResponseEntity.ok(users);
+        List<User> teachers = authService.getTeachers();
+        return ResponseEntity.ok(teachers);
     }
 
+
+    @GetMapping("/getStudents")
+    public HttpEntity<List<User>> getStudents(){
+        List<User> students = authService.getStudents();
+        return ResponseEntity.ok(students);
+    }
 //    @PostMapping("/register")
 //    public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {
 //        User user = new User();

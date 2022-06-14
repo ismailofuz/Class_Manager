@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.pdp.class_manager.entity.Message;
 import uz.pdp.class_manager.entity.User;
+import uz.pdp.class_manager.entity.enums.RoleEnum;
 import uz.pdp.class_manager.payload.ApiResponse;
 import uz.pdp.class_manager.repository.MessageRepository;
 import uz.pdp.class_manager.repository.UserRepository;
@@ -27,7 +28,7 @@ public class MessageService {
     public ApiResponse pinMessage(Message message) {
         List<User> all = userRepository.findAll();
         for (User user : all) {
-            if (user.getAuthorities().contains("STUDENT") && user.getSubject_name().equals(message.getUser().getSubject_name())) {
+            if (user.getRole().equals(RoleEnum.STUDENT) && user.getSubject_name().equals(message.getUser().getSubject_name())) {
                 message.setUser(user);
                 List<Message> messages = new ArrayList<>();
                 messages.add(message);

@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.pdp.class_manager.entity.Attachment;
 import uz.pdp.class_manager.entity.User;
+import uz.pdp.class_manager.entity.enums.RoleEnum;
 import uz.pdp.class_manager.payload.ApiResponse;
 import uz.pdp.class_manager.payload.UserUpdateDto;
 import uz.pdp.class_manager.repository.AttachmentRepository;
@@ -56,10 +57,20 @@ public class AuthService implements UserDetailsService {
         return new ApiResponse("User successfully edited", true, editUser);
     }
 
-    public List<User> getUsers() {
+    public List<User> getTeachers() {
         List<User> users = new ArrayList<>();
         for (User user : userRepository.findAll()) {
-            if (user.getAuthorities().contains("TEACHER")) {
+            if (user.getRole().equals(RoleEnum.TEACHER)) {
+                users.add(user);
+            }
+        }
+        return users;
+    }
+
+    public List<User> getStudents() {
+        List<User> users = new ArrayList<>();
+        for (User user : users) {
+            if (user.getRole().equals(RoleEnum.STUDENT)) {
                 users.add(user);
             }
         }
