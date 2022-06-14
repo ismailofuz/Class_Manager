@@ -28,11 +28,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Encoder encoder;
 
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
-                .cors().disable()
+                .cors()
+                .and()
+                .csrf().disable()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
