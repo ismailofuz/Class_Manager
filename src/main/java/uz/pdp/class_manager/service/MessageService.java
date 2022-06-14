@@ -8,6 +8,7 @@ import uz.pdp.class_manager.payload.ApiResponse;
 import uz.pdp.class_manager.repository.MessageRepository;
 import uz.pdp.class_manager.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,9 @@ public class MessageService {
         for (User user : all) {
             if (user.getAuthorities().contains("STUDENT") && user.getSubject_name().equals(message.getUser().getSubject_name())) {
                 message.setUser(user);
-                user.setMessages(List.of(message));
+                List<Message> messages = new ArrayList<>();
+                messages.add(message);
+                user.setMessages(messages);
                 messageRepository.save(message);
             }
         }
