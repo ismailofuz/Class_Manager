@@ -18,12 +18,16 @@ import uz.pdp.class_manager.payload.ApiResponse;
 
 import uz.pdp.class_manager.payload.LoginDTO;
 
+import uz.pdp.class_manager.payload.RegisterDTO;
+import uz.pdp.class_manager.payload.UserUpdateDto;
+import uz.pdp.class_manager.repository.UserRepository;
 import uz.pdp.class_manager.security.JwtProvider;
+import uz.pdp.class_manager.service.AuthService;
 
 
+import javax.naming.NameNotFoundException;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -33,15 +37,11 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
-
-//    private final PasswordEncoder passwordEncoder;
-//
-//
-//    private final UserRepository userRepository;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public HttpEntity<?> login(@Valid @RequestBody LoginDTO dto) {
-        ApiResponse apiResponse ;
+        ApiResponse apiResponse;
 
         try {
             Authentication authentication = authenticationManager.
@@ -61,6 +61,19 @@ public class AuthController {
         }
 
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+    @PutMapping("/{id}")
+    public HttpEntity<?> editProfile(@PathVariable Integer id, @RequestBody UserUpdateDto dto) {
+        ApiResponse apiResponse = authService.editProfile(id, dto);
+        return ResponseEntity.status(apiResponse.isSuccess() ?
+                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+    @GetMapping("/getTeachers")
+    public HttpEntity<List<User>> getUsers(){
+        List<User> users = authService.getUsers();
+        return ResponseEntity.ok(users);
     }
 
 //    @PostMapping("/register")
