@@ -69,7 +69,7 @@ public class AuthService implements UserDetailsService {
 
     public List<User> getStudents() {
         List<User> users = new ArrayList<>();
-        for (User user : users) {
+        for (User user : userRepository.findAll()) {
             if (user.getRole().equals(RoleEnum.STUDENT)) {
                 users.add(user);
             }
