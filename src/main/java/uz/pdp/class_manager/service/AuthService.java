@@ -1,6 +1,8 @@
 package uz.pdp.class_manager.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +12,7 @@ import uz.pdp.class_manager.entity.Attachment;
 import uz.pdp.class_manager.entity.User;
 import uz.pdp.class_manager.entity.enums.RoleEnum;
 import uz.pdp.class_manager.payload.ApiResponse;
+import uz.pdp.class_manager.payload.ChangePasswordDTO;
 import uz.pdp.class_manager.payload.UserUpdateDto;
 import uz.pdp.class_manager.repository.AttachmentRepository;
 import uz.pdp.class_manager.repository.UserRepository;
@@ -40,19 +43,27 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    public ApiResponse editProfile(Integer id, UserUpdateDto dto) {
+    public ApiResponse editProfile(UserUpdateDto dto) {
         Optional<User> optionalUser = userRepository.findByUsername(dto.getUsername());
         Optional<User> userOptional = userRepository.findByEmail(dto.getEmail());
         if (optionalUser.isPresent() || userOptional.isPresent()) {
             return new ApiResponse("This username or email already exists", false);
         }
         Optional<Attachment> optionalAttachment = attachmentRepository.findById(dto.getAttachmentId());
-        Optional<User> user = userRepository.findById(id);
-        User editUser = user.get();
-        editUser.setAttachment(optionalAttachment.get());
-        editUser.setEmail(dto.getEmail());
-        editUser.setPassword(encoder.encode(dto.getNewPassword()));
-        editUser.setUsername(dto.getUsername());
+//        Optional<User> user = userRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User editUser = (User) authentication.getPrincipal();
+//        User editUser = user.get();
+        if (dto.getAttachmentId() != null) {
+            editUser.setAttachment(optionalAttachment.get());
+        }
+        if (!dto.getEmail().equals("null")) {
+            editUser.setEmail(dto.getEmail());
+        }
+//        editUser.setPassword(encoder.encode(dto.getNewPassword()));
+        if (!dto.getUsername().equals("null")) {
+            editUser.setUsername(dto.getUsername());
+        }
         userRepository.save(editUser);
         return new ApiResponse("User successfully edited", true, editUser);
     }
@@ -75,5 +86,18 @@ public class AuthService implements UserDetailsService {
             }
         }
         return users;
+    }
+
+    public ApiResponse changePassword(ChangePasswordDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        if (encoder.encode(dto.getOldPassword()).equals(principal.getPassword())) {
+            if (dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+                principal.setPassword(dto.getNewPassword());
+                return new ApiResponse("Password successfully changed", true);
+            }
+            return new ApiResponse("Password do not match", false);
+        }
+        return new ApiResponse("Incorrect old password", false);
     }
 }

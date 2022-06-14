@@ -18,8 +18,8 @@ public class UserUpdateDto {
 
     private Integer attachmentId;
 
-    private String newPassword;
-
-    private String confirmNewPassword;
+//    private String newPassword;
+//
+//    private String confirmNewPassword;
 
 }

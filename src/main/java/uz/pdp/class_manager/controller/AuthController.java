@@ -14,12 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.class_manager.entity.User;
 
-import uz.pdp.class_manager.payload.ApiResponse;
+import uz.pdp.class_manager.payload.*;
 
-import uz.pdp.class_manager.payload.LoginDTO;
-
-import uz.pdp.class_manager.payload.RegisterDTO;
-import uz.pdp.class_manager.payload.UserUpdateDto;
 import uz.pdp.class_manager.repository.UserRepository;
 import uz.pdp.class_manager.security.JwtProvider;
 import uz.pdp.class_manager.service.AuthService;
@@ -63,9 +59,9 @@ public class AuthController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
-    @PutMapping("/{id}")
-    public HttpEntity<?> editProfile(@PathVariable Integer id, @RequestBody UserUpdateDto dto) {
-        ApiResponse apiResponse = authService.editProfile(id, dto);
+    @PutMapping
+    public HttpEntity<?> editProfile(@RequestBody UserUpdateDto dto) {
+        ApiResponse apiResponse = authService.editProfile(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ?
                 HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
     }
@@ -81,6 +77,13 @@ public class AuthController {
     public HttpEntity<List<User>> getStudents(){
         List<User> students = authService.getStudents();
         return ResponseEntity.ok(students);
+    }
+
+    @PostMapping
+    public HttpEntity<?> changePassword(@RequestBody ChangePasswordDTO dto){
+        ApiResponse apiResponse = authService.changePassword(dto);
+        return ResponseEntity.status(apiResponse.isSuccess() ?
+                HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
     }
 //    @PostMapping("/register")
 //    public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {

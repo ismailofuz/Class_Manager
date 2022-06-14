@@ -39,8 +39,6 @@ public class MessageController {
 
     @PostMapping("/pin")
     public HttpEntity<?> addMessage(@RequestBody Message message) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principal = (User) authentication.getPrincipal();
         ApiResponse apiResponse = messageService.pinMessage(message);
         return ResponseEntity.ok().body(apiResponse);
     }

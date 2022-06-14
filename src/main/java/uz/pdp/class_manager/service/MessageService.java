@@ -1,6 +1,8 @@
 package uz.pdp.class_manager.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uz.pdp.class_manager.entity.Message;
 import uz.pdp.class_manager.entity.User;
@@ -26,14 +28,20 @@ public class MessageService {
     }
 
     public ApiResponse pinMessage(Message message) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        message.setUser(principal);
         List<User> all = userRepository.findAll();
         for (User user : all) {
-            if (user.getRole().equals(RoleEnum.STUDENT) && user.getSubject_name().equals(message.getUser().getSubject_name())) {
-                message.setUser(user);
-                List<Message> messages = new ArrayList<>();
-                messages.add(message);
-                user.setMessages(messages);
-                messageRepository.save(message);
+            if (user.getRole().equals(RoleEnum.STUDENT)) {
+                for (Object o : user.getSubject_names().toArray()) {
+                    if (o.equals(message.getUser().getSubject_names())) {
+                        List<Message> messages = new ArrayList<>();
+                        messages.add(message);
+                        user.setMessages(messages);
+                        messageRepository.save(message);
+                    }
+                }
             }
         }
         return new ApiResponse("Successfully send message", true);
