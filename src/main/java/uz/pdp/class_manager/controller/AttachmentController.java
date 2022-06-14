@@ -2,6 +2,9 @@ package uz.pdp.class_manager.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -128,6 +131,46 @@ public class AttachmentController {
             throw new FileNotFoundException("File not found");
         }
     }
+
+//    @PutMapping("/{id}")
+//    public HttpEntity<?> editAttachment(@PathVariable Integer id, @NotNull MultipartHttpServletRequest request) throws IOException {
+//
+//        Optional<Attachment> optionalAttachment = attachmentRepository.findById(id);
+//        if (optionalAttachment.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This attachment not found");
+//        }
+//
+//        Iterator<String> fileNames = request.getFileNames();
+//        MultipartFile file = request.getFile(fileNames.next());
+//
+//        // file information
+//        assert file != null; //if dek tekshirganda
+//        String originalFilename = file.getOriginalFilename();
+//        long size = file.getSize();
+//        String contentType = file.getContentType();
+//
+//        Attachment attachment = new Attachment();
+//        attachment.setFileOriginalName(originalFilename);
+//        attachment.setContentType(contentType);
+//        attachment.setSize(size);
+//
+//        Attachment save = attachmentRepository.save(attachment);
+//
+//        // file content (asosiy byte[] larda saqlaymiz)  info
+//        byte[] bytes = file.getBytes();
+//
+//        AttachmentContent attachmentContent = new AttachmentContent();
+//
+//        attachmentContent.setBytes(bytes);
+//        attachmentContent.setAttachment(save);
+//
+//        attachmentContentRepository.save(attachmentContent);
+//        return ResponseEntity.ok("File saqlandi  id : " + save.getId());
+//    }
+
+
+
+
 
 //    @GetMapping("/getFileFromSystem/{id}")
 //    public void getFilesfromsystem(@PathVariable Integer id, HttpServletResponse response) throws IOException {

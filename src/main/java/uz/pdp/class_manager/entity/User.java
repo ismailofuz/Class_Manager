@@ -1,5 +1,6 @@
 package uz.pdp.class_manager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -54,7 +55,14 @@ public class User implements UserDetails {
     private String subject_name;
 
     @UpdateTimestamp
-    private Timestamp last_updated_at ;
+    private Timestamp last_updated_at;
+
+
+    @OneToOne
+    private Attachment attachment;
+
+    @OneToMany(mappedBy = "user")
+    private List<Message> messages;
 
     private boolean accountNonExpired = true;
     private boolean accountNonLocked = true;

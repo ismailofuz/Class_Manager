@@ -30,8 +30,6 @@ public class DataLoader implements CommandLineRunner {
 
             User user1 = new User("Mr.Mike", encoder.encode("07062003"),"email@gmail.com", RoleEnum.TEACHER,"Maths");
             User user2 = new User("Olimjon",encoder.encode("07062003"),"email1@gmail.com", RoleEnum.STUDENT,"Maths");
-
-
             User user3 = new User("Doniyor",encoder.encode("07062003"),"email2@gmail.com", RoleEnum.STUDENT,"Maths");
             User user4 = new User("Utkir",encoder.encode("07062003"),"email3@gmail.com", RoleEnum.STUDENT,"Maths");
             User user5 = new User("Jabbor",encoder.encode("07062003"),"email4@gmail.com", RoleEnum.STUDENT,"Maths");
