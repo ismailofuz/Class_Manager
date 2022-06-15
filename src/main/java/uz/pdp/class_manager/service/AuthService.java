@@ -1,6 +1,7 @@
 package uz.pdp.class_manager.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,17 +44,25 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    public ApiResponse editProfile(UserUpdateDto dto) {
+    public ApiResponse editProfile(UserUpdateDto dto, User editUser) {
         Optional<User> optionalUser = userRepository.findByUsername(dto.getUsername());
         Optional<User> userOptional = userRepository.findByEmail(dto.getEmail());
         if (optionalUser.isPresent() || userOptional.isPresent()) {
             return new ApiResponse("This username or email already exists", false);
         }
-        Optional<Attachment> optionalAttachment = attachmentRepository.findById(dto.getAttachmentId());
+        Optional<Attachment> optionalAttachment = null;
+        if (dto.getAttachmentId() != null) {
+            optionalAttachment = attachmentRepository.findById(dto.getAttachmentId());
+        }
 //        Optional<User> user = userRepository.findById(id);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User editUser = (User) authentication.getPrincipal();
+
 //        User editUser = user.get();
+        if (!dto.getFirstName().equals("null")) {
+            editUser.setFirstName(dto.getFirstName());
+        }
+        if (!dto.getLastName().equals("null")) {
+            editUser.setLastName(dto.getLastName());
+        }
         if (dto.getAttachmentId() != null) {
             editUser.setAttachment(optionalAttachment.get());
         }
@@ -91,13 +100,28 @@ public class AuthService implements UserDetailsService {
     public ApiResponse changePassword(ChangePasswordDTO dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User principal = (User) authentication.getPrincipal();
-        if (encoder.encode(dto.getOldPassword()).equals(principal.getPassword())) {
+        if (checkOldPassword(dto.getOldPassword()).isSuccess()) {
             if (dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
                 principal.setPassword(dto.getNewPassword());
-                return new ApiResponse("Password successfully changed", true);
+                return new ApiResponse("Password successfully edited", true);
             }
-            return new ApiResponse("Password do not match", false);
+            return new ApiResponse("Password not match", false);
         }
-        return new ApiResponse("Incorrect old password", false);
+        return new ApiResponse("old password incorrect", false);
+    }
+
+    public ApiResponse checkOldPassword(String dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        String encode = encoder.encode(dto);
+        if (encode.equals(principal.getPassword())) {
+            return new ApiResponse("Success", true);
+        }
+        return new ApiResponse("Old password incorrect", false);
+    }
+
+    public ApiResponse one(Integer id) {
+        Optional<User> byId = userRepository.findById(id);
+        return byId.map(user -> new ApiResponse("Mana", true, user)).orElseGet(() -> new ApiResponse("Not found", false));
     }
 }

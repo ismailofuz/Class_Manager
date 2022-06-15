@@ -5,11 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserUpdateDto {
+
+    private String firstName;
+
+    private String lastName;
 
     private String username;
 

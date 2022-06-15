@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.class_manager.entity.Message;
 import uz.pdp.class_manager.entity.User;
+import uz.pdp.class_manager.entity.enums.RoleEnum;
 import uz.pdp.class_manager.payload.ApiResponse;
 import uz.pdp.class_manager.payload.MessageDTO;
 import uz.pdp.class_manager.repository.MessageRepository;
@@ -27,7 +28,7 @@ public class MessageController {
 
     @GetMapping
     public List<Message> getMessages() {
-        return messageRepository.findAll();
+        return messageService.getMessages();
     }
 
     @GetMapping("/{id}")
@@ -39,9 +40,13 @@ public class MessageController {
 
     @PostMapping("/pin")
     public HttpEntity<?> addMessage(@RequestBody Message message) {
-        ApiResponse apiResponse = messageService.pinMessage(message);
-        return ResponseEntity.ok().body(apiResponse);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        message.setUser(principal);
+        if (principal.getRole().equals(RoleEnum.TEACHER)) {
+            ApiResponse apiResponse = messageService.pinMessage(message);
+            return ResponseEntity.ok().body(apiResponse);
+        }
+        return null;
     }
-
-
 }

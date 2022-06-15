@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Data
 public class ChangePasswordDTO {
-    @NotBlank(message = "Please enter old passowrd")
+    @NotBlank(message = "Please enter old password")
     private String oldPassword;
 
     @Size(min = 6, message = "Please enter code in valid type")

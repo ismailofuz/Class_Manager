@@ -31,19 +31,40 @@ public class MessageService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User principal = (User) authentication.getPrincipal();
         message.setUser(principal);
-        List<User> all = userRepository.findAll();
-        for (User user : all) {
-            if (user.getRole().equals(RoleEnum.STUDENT)) {
-                for (Object o : user.getSubject_names().toArray()) {
-                    if (o.equals(message.getUser().getSubject_names())) {
-                        List<Message> messages = new ArrayList<>();
-                        messages.add(message);
-                        user.setMessages(messages);
-                        messageRepository.save(message);
+        List<Message> messages = new ArrayList<>();
+        messages.add(message);
+        principal.setMessages(messages);
+        messageRepository.save(message);
+//        List<User> all = userRepository.findAll();
+//        for (User user : all) {
+//            if (user.getRole().equals(RoleEnum.STUDENT)) {
+//                for (Object o : user.getSubject_names().toArray()) {
+//                    if (o.equals(message.getUser().getSubject_names())) {
+//                        List<Message> messages = new ArrayList<>();
+//                        messages.add(message);
+//                        user.setMessages(messages);
+//                        messageRepository.save(message);
+//                    }
+//                }
+//            }
+//        }
+        return new ApiResponse("Successfully send message", true);
+    }
+
+    public List<Message> getMessages() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        List<Message> messages = messageRepository.findAll();
+        List<Message> getMessages = new ArrayList<>();
+        if (user.getRole().equals(RoleEnum.STUDENT)){
+            for (String subject_name : user.getSubject_names()) {
+                for (Message message : messages) {
+                    if (subject_name.equals(message.getUser().getSubject_names())) {
+                        getMessages.add(message);
                     }
                 }
             }
         }
-        return new ApiResponse("Successfully send message", true);
+        return getMessages;
     }
 }

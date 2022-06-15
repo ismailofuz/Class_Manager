@@ -26,21 +26,38 @@ import java.util.List;
 @Transactional
 public class User implements UserDetails {
 
-    public User(String username, String password, String email, RoleEnum role, List<String> subject_name) {
+    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role, List<String> subject_names) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.subject_names = subject_name;
+        this.subject_names = subject_names;
+    }
+
+    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
 
+    @Column(nullable = false)
+    private String firstName;
 
+    @Column(nullable = false)
+    private String lastName;
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
@@ -57,7 +74,6 @@ public class User implements UserDetails {
 
     @UpdateTimestamp
     private Timestamp last_updated_at;
-
 
     @OneToOne
     private Attachment attachment;

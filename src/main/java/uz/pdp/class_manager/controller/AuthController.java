@@ -8,15 +8,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.class_manager.entity.User;
 
+import uz.pdp.class_manager.entity.enums.RoleEnum;
 import uz.pdp.class_manager.payload.*;
 
 import uz.pdp.class_manager.repository.UserRepository;
+import uz.pdp.class_manager.security.Encoder;
 import uz.pdp.class_manager.security.JwtProvider;
 import uz.pdp.class_manager.service.AuthService;
 
@@ -34,6 +38,19 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final AuthService authService;
+
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+
+    @GetMapping("/{id}")
+    public HttpEntity<?> one(@PathVariable Integer id) {
+        ApiResponse apiResponse = authService.one(id);
+        return ResponseEntity.status(apiResponse.isSuccess() ?
+                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse.getObject());
+    }
+
 
     @PostMapping("/login")
     public HttpEntity<?> login(@Valid @RequestBody LoginDTO dto) {
@@ -59,64 +76,67 @@ public class AuthController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
-    @PutMapping
+    @PutMapping("/editProfile")
     public HttpEntity<?> editProfile(@RequestBody UserUpdateDto dto) {
-        ApiResponse apiResponse = authService.editProfile(dto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User editUser = (User) authentication.getPrincipal();
+        ApiResponse apiResponse = authService.editProfile(dto, editUser);
         return ResponseEntity.status(apiResponse.isSuccess() ?
                 HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
+    @PostMapping("/changePassword")
+    public HttpEntity<?> changePassword(@RequestBody ChangePasswordDTO dto) {
+        ApiResponse apiResponse = authService.changePassword(dto);
+        return ResponseEntity.status(apiResponse.isSuccess() ?
+                HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    }
+
+    @PostMapping
+    public HttpEntity<Boolean> checkOldPassword(String dto) {
+        ApiResponse apiResponse = authService.checkOldPassword(dto);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse.isSuccess());
+    }
+
     @GetMapping("/getTeachers")
-    public HttpEntity<List<User>> getUsers(){
+    public HttpEntity<List<User>> getUsers() {
         List<User> teachers = authService.getTeachers();
         return ResponseEntity.ok(teachers);
     }
 
 
     @GetMapping("/getStudents")
-    public HttpEntity<List<User>> getStudents(){
+    public HttpEntity<List<User>> getStudents() {
         List<User> students = authService.getStudents();
         return ResponseEntity.ok(students);
     }
 
-    @PostMapping
-    public HttpEntity<?> changePassword(@RequestBody ChangePasswordDTO dto){
-        ApiResponse apiResponse = authService.changePassword(dto);
-        return ResponseEntity.status(apiResponse.isSuccess() ?
-                HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    @Transactional
+    @PostMapping("/register")
+    public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {
+        User user = new User();
+        // username bilan olishdan avval unique bo'lishini aniqlab olishimiza kerak
+        Optional<User> optionalUser = userRepository.findByEmail(dto.getEmail());
+        Optional<User> byUsername = userRepository.findByUsername(dto.getUsername());
+        if (optionalUser.isPresent() || byUsername.isPresent()) {
+            ApiResponse apiResponse = new ApiResponse("This email or username already exists, please try again", false);
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setRole(dto.getRole());  // default holatda bo'ladi 1 id li
+        user.setEmail(dto.getEmail());
+        user.setUsername(dto.getUsername());
+
+        user.setPassword(passwordEncoder.encode(dto.getPassword())); // password doim encode holda saqlanadi
+        User saved_user = userRepository.save(user);
+
+        ApiResponse apiResponse = new ApiResponse("Registered successfully please turn it to login page", true, saved_user);
+
+
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+
     }
-//    @PostMapping("/register")
-//    public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {
-//        User user = new User();
-//        Optional<UserRole> optionalUserRole = roleRepository.findById(UUID.fromString("1565e035-4f3e-487f-b69f-5370bc2f0639"));
-//
-//        if (optionalUserRole.isPresent()) {
-//
-//            // username bilan olishdan avval unique bo'lishini aniqlab olishimiza kerak
-//
-//            Optional<User> optionalUser = userRepository.findByEmail(dto.getEmail());
-//            if(optionalUser.isPresent()){
-//                ApiResponse apiResponse = new ApiResponse("This email already exists, please try again",false);
-//
-//                return ResponseEntity.badRequest().body(apiResponse);
-//
-//            }
-//
-//            user.setUserRole(optionalUserRole.get());  // default holatda bo'ladi 1 id li
-//            user.setEmail(dto.getEmail());
-//            user.setUsername(dto.getUsername());
-//
-//            user.setPassword(passwordEncoder.encode(dto.getPassword())); // password doim encode holda saqlanadi
-//            User saved_user = userRepository.save(user);
-//
-//            ApiResponse apiResponse = new ApiResponse("Registered successfully please turn it to login page", true, saved_user);
-//
-//
-//            return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
-//        } else {
-//            throw new NameNotFoundException("with this name role not found");
-//        }
-//    }
 
 
     // xatolik bo'lsa requiredlarni ko'rsatadi
