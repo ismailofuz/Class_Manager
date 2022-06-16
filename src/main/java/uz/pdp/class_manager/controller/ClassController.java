@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.class_manager.entity.Classes;
+import uz.pdp.class_manager.entity.User;
 import uz.pdp.class_manager.payload.ApiResponse;
+import uz.pdp.class_manager.payload.ClassDTO;
 import uz.pdp.class_manager.repository.ClassRepository;
 import uz.pdp.class_manager.service.ClassService;
 
@@ -35,8 +37,15 @@ public class ClassController {
     }
 
     @PostMapping("/addClass")
-    public HttpEntity<ApiResponse> addClass(@Valid @RequestBody Classes classes){
-        ApiResponse apiResponse = classService.addClass(classes);
+    public HttpEntity<ApiResponse> addClass(@Valid @RequestBody ClassDTO classDTO) {
+        ApiResponse apiResponse = classService.addClass(classDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+    @PostMapping("/addStudentToClass/{id}")
+    public HttpEntity<?> addStudent(@RequestBody ClassDTO classDTO, @PathVariable Integer id) {
+        ApiResponse apiResponse = classService.addStudent(classDTO, id);
+        return ResponseEntity.status(apiResponse.isSuccess() ?
+                HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
     }
 }

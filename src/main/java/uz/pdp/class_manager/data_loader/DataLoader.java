@@ -11,6 +11,7 @@ import uz.pdp.class_manager.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 
 @Component
@@ -31,11 +32,11 @@ public class DataLoader implements CommandLineRunner {
 
 
 
-            User user1 = new User("O'tkirjon", "Jo'raqulov","Mr.Mike", encoder.encode("07062003"),"email@gmail.com", RoleEnum.TEACHER, Collections.singletonList("Maths"));
-            User user2 = new User("O'tkirjon", "Jo'raqulov","Olimjon",encoder.encode("07062003"),"email1@gmail.com", RoleEnum.STUDENT,Arrays.asList("Maths", "English"));
-            User user3 = new User("O'tkirjon", "Jo'raqulov","Doniyor",encoder.encode("07062003"),"email2@gmail.com", RoleEnum.STUDENT,Arrays.asList("Maths", "Art"));
-            User user4 = new User("O'tkirjon", "Jo'raqulov","Utkir",encoder.encode("07062003"),"email3@gmail.com", RoleEnum.STUDENT,Arrays.asList("Maths", "PI"));
-            User user5 = new User("O'tkirjon", "Jo'raqulov","Jabbor",encoder.encode("07062003"),"email4@gmail.com", RoleEnum.STUDENT,Arrays.asList("Maths", "Physics"));
+            User user1 = new User("O'tkirjon", "Jo'raqulov","Mr.Mike", encoder.encode("07062003"),"email@gmail.com", RoleEnum.TEACHER);
+            User user2 = new User("O'tkirjon", "Jo'raqulov","Olimjon",encoder.encode("07062003"),"email1@gmail.com", RoleEnum.STUDENT);
+            User user3 = new User("O'tkirjon", "Jo'raqulov","Doniyor",encoder.encode("07062003"),"email2@gmail.com", RoleEnum.STUDENT);
+            User user4 = new User("O'tkirjon", "Jo'raqulov","Utkir",encoder.encode("07062003"),"email3@gmail.com", RoleEnum.STUDENT);
+            User user5 = new User("O'tkirjon", "Jo'raqulov","Jabbor",encoder.encode("07062003"),"email4@gmail.com", RoleEnum.STUDENT);
             User user6 = new User("Sirojiddin", "Ismoilov","Ismailofuz",encoder.encode("09052002"),"sirojiddin@gmail.com", RoleEnum.ADMIN);
 
             userRepository.save(user1);

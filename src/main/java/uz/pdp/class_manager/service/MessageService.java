@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import uz.pdp.class_manager.entity.Classes;
 import uz.pdp.class_manager.entity.Message;
 import uz.pdp.class_manager.entity.User;
 import uz.pdp.class_manager.entity.enums.RoleEnum;
@@ -57,9 +58,9 @@ public class MessageService {
         List<Message> messages = messageRepository.findAll();
         List<Message> getMessages = new ArrayList<>();
         if (user.getRole().equals(RoleEnum.STUDENT)){
-            for (String subject_name : user.getSubject_names()) {
+            for (Classes subject_name : user.getClasses()) {
                 for (Message message : messages) {
-                    if (subject_name.equals(message.getUser().getSubject_names())) {
+                    if (subject_name.equals(message.getUser().getClasses().get(0))) {
                         getMessages.add(message);
                     }
                 }

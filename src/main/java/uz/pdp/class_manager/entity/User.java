@@ -26,14 +26,14 @@ import java.util.List;
 @Transactional
 public class User implements UserDetails {
 
-    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role, List<String> subject_names) {
+    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role, List<Classes> classes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.subject_names = subject_names;
+        this.classes = classes;
     }
 
     public User(String firstName, String lastName, String username, String password, String email, RoleEnum role) {
@@ -69,8 +69,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
-    @ElementCollection
-    private List<String> subject_names;
+//    @ElementCollection
+//    private List<String> subject_names;
+
+    @ManyToMany
+    private List<Classes> classes;
 
     @UpdateTimestamp
     private Timestamp last_updated_at;

@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,10 @@ public class Classes {
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Please enter class name!")
     private String name;
+
+    @OneToOne
+    private User teacher;
+
+    @OneToMany
+    private List<User> student;
 }
