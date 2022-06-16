@@ -45,9 +45,9 @@ public class AuthService implements UserDetailsService {
     }
 
     public ApiResponse editProfile(UserUpdateDto dto, User editUser) {
-        Optional<User> optionalUser = userRepository.findByUsername(dto.getUsername());
-        Optional<User> userOptional = userRepository.findByEmail(dto.getEmail());
-        if (optionalUser.isPresent() || userOptional.isPresent()) {
+        boolean username = userRepository.existsByUsername(dto.getUsername());
+        boolean email = userRepository.existsByEmail(dto.getEmail());
+        if (username || email) {
             return new ApiResponse("This username or email already exists", false);
         }
         Optional<Attachment> optionalAttachment = null;

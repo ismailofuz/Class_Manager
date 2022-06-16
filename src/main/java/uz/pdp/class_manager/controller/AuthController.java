@@ -116,9 +116,9 @@ public class AuthController {
     public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {
         User user = new User();
         // username bilan olishdan avval unique bo'lishini aniqlab olishimiza kerak
-        Optional<User> optionalUser = userRepository.findByEmail(dto.getEmail());
-        Optional<User> byUsername = userRepository.findByUsername(dto.getUsername());
-        if (optionalUser.isPresent() || byUsername.isPresent()) {
+        boolean email = userRepository.existsByEmail(dto.getEmail());
+        boolean username = userRepository.existsByUsername(dto.getUsername());
+        if (username || email) {
             ApiResponse apiResponse = new ApiResponse("This email or username already exists, please try again", false);
             return ResponseEntity.badRequest().body(apiResponse);
         }
