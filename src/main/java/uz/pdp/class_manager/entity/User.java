@@ -72,7 +72,7 @@ public class User implements UserDetails {
 //    @ElementCollection
 //    private List<String> subject_names;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Classes> classes;
 
     @UpdateTimestamp

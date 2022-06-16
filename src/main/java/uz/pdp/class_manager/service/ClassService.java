@@ -38,6 +38,7 @@ public class ClassService {
             List<Classes> classesList = new ArrayList<>();
             classesList.add(newClass);
             optionalUser.get().setClasses(classesList);
+            userRepository.save(optionalUser.get());
             return new ApiResponse("New class successfully created!", true);
         }
         return new ApiResponse("Teacher not found", false);
