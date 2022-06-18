@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -98,6 +99,7 @@ public class AuthController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse.isSuccess());
     }
 
+    @PreAuthorize(value = "STUDENT")
     @GetMapping("/getTeachers")
     public HttpEntity<List<User>> getUsers() {
         List<User> teachers = authService.getTeachers();
@@ -105,12 +107,14 @@ public class AuthController {
     }
 
 
+    @PreAuthorize(value = "TEACHER")
     @GetMapping("/getStudents")
     public HttpEntity<List<User>> getStudents() {
         List<User> students = authService.getStudents();
         return ResponseEntity.ok(students);
     }
 
+    @PreAuthorize(value = "ADMIN")
     @Transactional
     @PostMapping("/register")
     public HttpEntity<?> register(@Valid @RequestBody RegisterDTO dto) throws NameNotFoundException {

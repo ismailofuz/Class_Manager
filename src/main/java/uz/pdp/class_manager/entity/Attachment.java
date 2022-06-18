@@ -27,4 +27,8 @@ public class Attachment {
     // serverda turgan faylning nomi
     private String name;
 
+    private boolean isAssignment = false;
+
+    private boolean isSubmission = false;
+
 }

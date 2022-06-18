@@ -1,71 +1,63 @@
 package uz.pdp.class_manager.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+//import javax.validation.Valid;
 import java.util.Date;
 
 @Component
-public class JwtProvider {  // jwt token ustida amal bajaradigan class
-    private static final long expiration = 1000*60*60*24;
+public class JwtProvider {
+    private static final long expire = 1000*60*60*24;
     private static final String secretKey = "qwertyuiopplmnbv";
+//    @Value("${jwt.secretKey}")
+//    private String secretKey;
+//    @Value("${jwt.expireTime}")
+//    private long expire;
 
     public String generateToken(String username) {
-
-            String token = Jwts.builder()
-                    .setSubject(username)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                    .signWith(SignatureAlgorithm.HS512, secretKey)
-                    .compact();
-            return token;
-
+        return Jwts.builder()
+                .signWith(SignatureAlgorithm.HS512,secretKey)
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expire))
+                .compact();
     }
 
-    public String getUserName(String token){
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean expireToken(String token) {
         try {
-            String username = Jwts.parser()
+
+            Date expiration = Jwts
+                    .parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody()
-                    .getSubject();
-            return username;
-        } catch (ExpiredJwtException e) {
-            e.printStackTrace();
-        } catch (UnsupportedJwtException e) {
-            e.printStackTrace();
-        } catch (MalformedJwtException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+                    .getExpiration();
+            return expiration.after(new Date());
+        } catch (Exception e) {
+            return false;
         }
-        return null;
     }
 
-
-    public boolean validateToken(String token){  // bu o'zi tokenmi ? ha : yo'q
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Jwts
+                    .parser()
                     .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException e) {
-            e.printStackTrace();
-        } catch (UnsupportedJwtException e) {
-            e.printStackTrace();
-        } catch (MalformedJwtException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return false;
         }
-
-        return false;
     }
-
-
 }
