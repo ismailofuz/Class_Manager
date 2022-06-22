@@ -38,8 +38,8 @@ public class AssignmentController {
     }
 
     @PostMapping("/add")
-    public HttpEntity<?> addAssignment(MultipartHttpServletRequest request) throws IOException {
-        ApiResponse apiResponse = assignmentService.addAssignment(request);
+    public HttpEntity<?> addAssignment(@RequestBody AssignmentDTO assignmentDTO) {
+        ApiResponse apiResponse = assignmentService.addAssignment(assignmentDTO);
         return ResponseEntity.status(apiResponse.isSuccess() ?
                 HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
     }

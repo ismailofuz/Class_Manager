@@ -22,8 +22,6 @@ import java.util.List;
 @RequestMapping("/api/message")
 public class MessageController {
 
-    private final MessageRepository messageRepository;
-
     private final MessageService messageService;
 
     @GetMapping

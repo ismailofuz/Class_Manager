@@ -14,6 +14,8 @@ import uz.pdp.class_manager.payload.ApiResponse;
 import uz.pdp.class_manager.payload.AssignmentDTO;
 import uz.pdp.class_manager.repository.AssignmentRepository;
 import uz.pdp.class_manager.repository.AttachmentRepository;
+import uz.pdp.class_manager.repository.ClassRepository;
+import uz.pdp.class_manager.repository.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,8 +28,11 @@ import java.util.*;
 public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
+
     private final AttachmentRepository attachmentRepository;
 
+    private final ClassRepository classRepository;
     public ApiResponse getAssignment(Integer id) {
         Optional<Assignment> optionalAssignment = assignmentRepository.findById(id);
         return optionalAssignment.map(assignment -> new ApiResponse("", true, assignment)).orElseGet(() -> new ApiResponse("This assignment not found", false));
@@ -46,54 +51,17 @@ public class AssignmentService {
         return assignments;
     }
 
-    public ApiResponse addAssignment(MultipartHttpServletRequest request) throws IOException {
+    public ApiResponse addAssignment(AssignmentDTO assignmentDTO){
+        Optional<User> user = userRepository.findById(assignmentDTO.getTeacherId());
+        Optional<Attachment> attachment = attachmentRepository.findById(assignmentDTO.getAttachmentId());
+        Optional<Classes> classes = classRepository.findById(assignmentDTO.getClassId());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principal = (User) authentication.getPrincipal();
-        final String uploadingDirectoryProfile = "src/main/resources/profile";
-        final String uploadingDirectoryAssignment = "src/main/resources/assignments";
-        final String uploadingDirectorySubmission = "src/main/resources/submissions";
+        Assignment assignment = new Assignment();
+        assignment.setUser(user.get());
+        assignment.setClasses(classes.get());
+        assignment.setAttachment(attachment.get());
+        assignmentRepository.save(assignment);
 
-        Iterator<String> fileNames = request.getFileNames();
-        String fileName = fileNames.next();
-
-        MultipartFile file = request.getFile(fileName);
-        assert file != null;
-        long size = file.getSize();
-        String originalFilename = file.getOriginalFilename();
-        String contentType = file.getContentType();
-
-        Attachment attachment = new Attachment();
-        attachment.setSize(size);
-        attachment.setFileOriginalName(originalFilename);
-        attachment.setContentType(contentType);
-        String[] split = originalFilename.split("\\.");
-        String name = UUID.randomUUID() + "." + split[split.length - 1];
-        attachment.setName(name); // fayl nomi saqlanadi
-
-        Attachment save = attachmentRepository.save(attachment);
-
-
-
-        Assignment newAssignment = new Assignment();
-        newAssignment.setAttachment(save);
-        newAssignment.setClasses(principal.getClasses().get(0));
-        newAssignment.setUser(principal);
-        assignmentRepository.save(newAssignment);
-        // serverga yuklash
-
-        if (attachment.isAssignment()) {
-            Path path = Paths.get(uploadingDirectoryAssignment + "/" + name);
-            Files.copy(file.getInputStream(), path);
-        }
-        if (attachment.isSubmission()) {
-            Path path = Paths.get(uploadingDirectorySubmission + "/" + name);
-            Files.copy(file.getInputStream(), path);
-        }
-        Path path = Paths.get(uploadingDirectoryProfile + "/" + name);
-        Files.copy(file.getInputStream(), path);
-
-        return new ApiResponse("saqlandi id : " + save.getId(), true);
-
+        return new ApiResponse("Successfully added new assignment", true);
     }
 }

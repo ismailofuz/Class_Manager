@@ -21,7 +21,6 @@ import java.util.Optional;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-    private final UserRepository userRepository;
 
     public ApiResponse getMessage(Long id) {
         Optional<Message> optionalMessage = messageRepository.findById(id);

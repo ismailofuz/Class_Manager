@@ -93,7 +93,7 @@ public class AuthController {
                 HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
     }
 
-    @PostMapping
+    @PostMapping("/checkOldPassword")
     public HttpEntity<Boolean> checkOldPassword(String dto) {
         ApiResponse apiResponse = authService.checkOldPassword(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse.isSuccess());

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity(name = "classes")
-public class Classes {
+public class  Classes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

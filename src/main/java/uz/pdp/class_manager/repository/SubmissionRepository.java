@@ -12,4 +12,5 @@ import java.util.Optional;
 @Repository
 public interface SubmissionRepository extends JpaRepository<Submission, Integer> {
     List<Submission> findAllByCourseWorkName(@NotBlank(message = "Please enter class name!") String courseWork_name);
+
 }

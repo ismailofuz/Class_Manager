@@ -1,6 +1,7 @@
 package uz.pdp.class_manager.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -22,7 +23,7 @@ public class Submission {
     @OneToOne
     private Attachment attachment;
 
-    @CreatedDate
+    @CreationTimestamp
     private Timestamp timestamp;
 
     @ManyToOne

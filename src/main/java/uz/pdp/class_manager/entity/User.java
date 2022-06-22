@@ -72,7 +72,7 @@ public class User implements UserDetails {
 //    @ElementCollection
 //    private List<String> subject_names;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Classes> classes;
 
     @UpdateTimestamp
@@ -81,7 +81,7 @@ public class User implements UserDetails {
     @OneToOne
     private Attachment attachment;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Message> messages;
 
     private boolean accountNonExpired = true;

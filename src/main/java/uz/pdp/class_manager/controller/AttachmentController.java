@@ -42,39 +42,6 @@ public class AttachmentController {
     @Autowired
     AttachmentContentRepository attachmentContentRepository;
 
-
-    // uploading to the DB when only one file comes
-//    @PostMapping("/upload")
-//    public String upload(@NotNull MultipartHttpServletRequest request) throws IOException {
-//        Iterator<String> fileNames = request.getFileNames();
-//        MultipartFile file = request.getFile(fileNames.next());
-//
-//        // file information
-//        assert file != null; //if dek tekshirganda
-//        String originalFilename = file.getOriginalFilename();
-//        long size = file.getSize();
-//        String contentType = file.getContentType();
-//
-//        Attachment attachment = new Attachment();
-//        attachment.setFileOriginalName(originalFilename);
-//        attachment.setContentType(contentType);
-//        attachment.setSize(size);
-//
-//        Attachment save = attachmentRepository.save(attachment);
-//
-//        // file content (asosiy byte[] larda saqlaymiz)  info
-//        byte[] bytes = file.getBytes();
-//
-//        AttachmentContent attachmentContent = new AttachmentContent();
-//
-//        attachmentContent.setBytes(bytes);
-//        attachmentContent.setAttachment(save);
-//
-//        attachmentContentRepository.save(attachmentContent);
-//        return "File saqlandi  id : " + save.getId();
-//    }
-
-    // upload to the system :
     @PostMapping("/uploadSystem")
     public String system_upload(MultipartHttpServletRequest request) throws IOException {
         Iterator<String> fileNames = request.getFileNames();
@@ -112,6 +79,71 @@ public class AttachmentController {
         return "saqlandi id : " + save.getId();
 
     }
+
+    @GetMapping("/getFileFromSystem/{id}")
+    public void getFilesFromSystem(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+        Optional<Attachment> byId = attachmentRepository.findById(id);
+        if (byId.isPresent()) {
+            Attachment attachment = byId.get();
+            // attachmentga nom  o'rnatish yani uni kop'chirib olsa bo'ladimi yo'qmi
+            // faqat ko'rish uchunmi yoki :
+
+            // fayl nomi
+            response.setHeader("Content-Disposition",
+                    "attachment; filename = \""
+                            + attachment.getFileOriginalName() + "\"");
+
+            //type:
+            response.setContentType(attachment.getContentType());// nima bo'lasa shuni ayatadi
+            // content :
+
+            if (attachment.isSubmission()) {
+                FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryAssignment + "/" + attachment.getName());
+                FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+            }
+            if (attachment.isAssignment()) {
+                FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryAssignment + "/" + attachment.getName());
+                FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+            }
+            FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryProfile + "/" + attachment.getName());
+            FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+
+        } else
+            System.out.println("not found");
+    }
+    // uploading to the DB when only one file comes
+//    @PostMapping("/upload")
+//    public String upload(@NotNull MultipartHttpServletRequest request) throws IOException {
+//        Iterator<String> fileNames = request.getFileNames();
+//        MultipartFile file = request.getFile(fileNames.next());
+//
+//        // file information
+//        assert file != null; //if dek tekshirganda
+//        String originalFilename = file.getOriginalFilename();
+//        long size = file.getSize();
+//        String contentType = file.getContentType();
+//
+//        Attachment attachment = new Attachment();
+//        attachment.setFileOriginalName(originalFilename);
+//        attachment.setContentType(contentType);
+//        attachment.setSize(size);
+//
+//        Attachment save = attachmentRepository.save(attachment);
+//
+//        // file content (asosiy byte[] larda saqlaymiz)  info
+//        byte[] bytes = file.getBytes();
+//
+//        AttachmentContent attachmentContent = new AttachmentContent();
+//
+//        attachmentContent.setBytes(bytes);
+//        attachmentContent.setAttachment(save);
+//
+//        attachmentContentRepository.save(attachmentContent);
+//        return "File saqlandi  id : " + save.getId();
+//    }
+
+    // upload to the system :
+
 
     // getting from DB
 //    @GetMapping("/download/{id}")
@@ -179,37 +211,5 @@ public class AttachmentController {
 //        return ResponseEntity.ok("File saqlandi  id : " + save.getId());
 //    }
 
-
-    @GetMapping("/getFileFromSystem/{id}")
-    public void getFilesFromSystem(@PathVariable Integer id, HttpServletResponse response) throws IOException {
-        Optional<Attachment> byId = attachmentRepository.findById(id);
-        if (byId.isPresent()) {
-            Attachment attachment = byId.get();
-            // attachmentga nom  o'rnatish yani uni kop'chirib olsa bo'ladimi yo'qmi
-            // faqat ko'rish uchunmi yoki :
-
-            // fayl nomi
-            response.setHeader("Content-Disposition",
-                    "attachment; filename = \""
-                            + attachment.getFileOriginalName() + "\"");
-
-            //type:
-            response.setContentType(attachment.getContentType());// nima bo'lasa shuni ayatadi
-            // content :
-
-            if (attachment.isSubmission()){
-                FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryAssignment + "/" + attachment.getName());
-                FileCopyUtils.copy(fileInputStream, response.getOutputStream());
-            }
-            if (attachment.isAssignment()){
-                FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryAssignment + "/" + attachment.getName());
-                FileCopyUtils.copy(fileInputStream, response.getOutputStream());
-            }
-            FileInputStream fileInputStream = new FileInputStream(uploadingDirectoryProfile + "/" + attachment.getName());
-            FileCopyUtils.copy(fileInputStream, response.getOutputStream());
-
-        } else
-            System.out.println("not found");
-    }
 
 }
