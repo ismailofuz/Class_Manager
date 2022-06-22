@@ -54,25 +54,16 @@ public class AuthService implements UserDetailsService {
         if (dto.getAttachmentId() != null) {
             optionalAttachment = attachmentRepository.findById(dto.getAttachmentId());
         }
-//        Optional<User> user = userRepository.findById(id);
+        editUser.setFirstName(dto.getFirstName());
+        editUser.setLastName(dto.getLastName());
 
-//        User editUser = user.get();
-        if (!dto.getFirstName().equals("null")) {
-            editUser.setFirstName(dto.getFirstName());
-        }
-        if (!dto.getLastName().equals("null")) {
-            editUser.setLastName(dto.getLastName());
-        }
-        if (dto.getAttachmentId() != null) {
+        if (dto.getAttachmentId() != 0) {
             editUser.setAttachment(optionalAttachment.get());
         }
         if (!dto.getEmail().equals("null")) {
             editUser.setEmail(dto.getEmail());
         }
-//        editUser.setPassword(encoder.encode(dto.getNewPassword()));
-        if (!dto.getUsername().equals("null")) {
-            editUser.setUsername(dto.getUsername());
-        }
+        editUser.setUsername(dto.getUsername());
         userRepository.save(editUser);
         return new ApiResponse("User successfully edited", true, editUser);
     }

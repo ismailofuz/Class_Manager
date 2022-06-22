@@ -56,6 +56,8 @@ public class ClassService {
                     return new ApiResponse("This student already exists", false);
                 }
                 users.add(optionalStudent.get());
+                optionalStudent.get().setClasses(new ArrayList<>(Arrays.asList(optionalClasses.get())));
+                userRepository.save(optionalStudent.get());
             }
             optionalClasses.get().setStudent(users);
             classRepository.save(classes);
