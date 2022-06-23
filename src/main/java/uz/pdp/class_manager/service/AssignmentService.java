@@ -38,18 +38,18 @@ public class AssignmentService {
         return optionalAssignment.map(assignment -> new ApiResponse("", true, assignment)).orElseGet(() -> new ApiResponse("This assignment not found", false));
     }
 
-    public List<Assignment> getAssignments(Classes classes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principal = (User) authentication.getPrincipal();
-        List<Assignment> assignments = new ArrayList<>();
-        for (Classes aClass : principal.getClasses()) {
-            if (aClass.getName().equals(classes.getName())) {
-                List<Assignment> allByClassesName = assignmentRepository.findAllByClassesName(aClass.getName());
-                assignments.addAll(allByClassesName);
-            }
-        }
-        return assignments;
-    }
+//    public List<Assignment> getAssignments(Classes classes) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User principal = (User) authentication.getPrincipal();
+//        List<Assignment> assignments = new ArrayList<>();
+//        for (Classes aClass : principal.getClasses()) {
+//            if (aClass.getName().equals(classes.getName())) {
+//                List<Assignment> allByClassesName = assignmentRepository.findAllByClassesName(aClass.getName());
+//                assignments.addAll(allByClassesName);
+//            }
+//        }
+//        return assignments;
+//    }
 
     public ApiResponse addAssignment(AssignmentDTO assignmentDTO){
         Optional<User> user = userRepository.findById(assignmentDTO.getTeacherId());

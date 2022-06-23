@@ -20,18 +20,18 @@ public class SubmissionController {
 
     private final SubmissionService submissionService;
 
-    @GetMapping("/getAll")
-    public HttpEntity<List<Submission>> getSubmissions(@RequestBody Classes classes){
-        List<Submission> submissions = submissionService.getSubmissions(classes);
-        return ResponseEntity.ok(submissions);
-    }
-
-    @GetMapping("/get/{id}")
-    public HttpEntity<?> getSubmission(@PathVariable Integer id){
-        ApiResponse apiResponse = submissionService.getSubmission(id);
-        return ResponseEntity.status(apiResponse.isSuccess() ?
-                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
-    }
+//    @GetMapping("/getAll")
+//    public HttpEntity<List<Submission>> getSubmissions(@RequestBody Classes classes){
+//        List<Submission> submissions = submissionService.getSubmissions(classes);
+//        return ResponseEntity.ok(submissions);
+//    }
+//
+//    @GetMapping("/get/{id}")
+//    public HttpEntity<?> getSubmission(@PathVariable Integer id){
+//        ApiResponse apiResponse = submissionService.getSubmission(id);
+//        return ResponseEntity.status(apiResponse.isSuccess() ?
+//                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
+//    }
 
     @PostMapping("/addSubmission")
     public HttpEntity<Boolean> addSubmission(@RequestBody SubmissionDTO submisssionDTO){

@@ -21,7 +21,6 @@ import uz.pdp.class_manager.security.Encoder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -55,7 +54,9 @@ public class AuthService implements UserDetailsService {
         if (dto.getAttachmentId() != null) {
             optionalAttachment = attachmentRepository.findById(dto.getAttachmentId());
         }
-        Objects.requireNonNull(optionalAttachment).ifPresent(editUser::setAttachment);
+        if (dto.getAttachmentId() != null) {
+            editUser.setAttachment(optionalAttachment.get());
+        }
         editUser.setFirstName(dto.getFirstName());
         editUser.setLastName(dto.getLastName());
 

@@ -24,18 +24,18 @@ public class AssignmentController {
     private final AssignmentRepository assignmentRepository;
 
     private final AssignmentService assignmentService;
-    @GetMapping("/getAll")
-    public HttpEntity<List<Assignment>> getAssignments(Classes classes){
-        List<Assignment> assignments = assignmentService.getAssignments(classes);
-        return ResponseEntity.ok(assignments);
-    }
-
-    @GetMapping("/{id}")
-    public HttpEntity<ApiResponse> getAssignment(@PathVariable Integer id){
-        ApiResponse apiResponse = assignmentService.getAssignment(id);
-        return ResponseEntity.status(apiResponse.isSuccess() ?
-                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
-    }
+//    @GetMapping("/getAll")
+//    public HttpEntity<List<Assignment>> getAssignments(Classes classes){
+//        List<Assignment> assignments = assignmentService.getAssignments(classes);
+//        return ResponseEntity.ok(assignments);
+//    }
+//
+//    @GetMapping("/{id}")
+//    public HttpEntity<ApiResponse> getAssignment(@PathVariable Integer id){
+//        ApiResponse apiResponse = assignmentService.getAssignment(id);
+//        return ResponseEntity.status(apiResponse.isSuccess() ?
+//                HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
+//    }
 
     @PostMapping("/add")
     public HttpEntity<?> addAssignment(@RequestBody AssignmentDTO assignmentDTO) {

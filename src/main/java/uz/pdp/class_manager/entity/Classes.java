@@ -23,10 +23,6 @@ public class  Classes {
     private String name;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    private User teacher;
-
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
-    private List<User> student;
+    private List<User> users;
 }

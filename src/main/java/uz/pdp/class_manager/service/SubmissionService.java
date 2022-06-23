@@ -29,18 +29,18 @@ public class SubmissionService {
 
     private final AttachmentRepository attachmentRepository;
 
-    public List<Submission> getSubmissions(Classes classes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principal = (User) authentication.getPrincipal();
-        List<Submission> submissions = new ArrayList<>();
-        for (Classes classs : principal.getClasses()) {
-            if (classes.getName().equals(classs.getName())) {
-                List<Submission> allByCourseWorkName = submissionRepository.findAllByCourseWorkName(classes.getName());
-                submissions.addAll(allByCourseWorkName);
-            }
-        }
-        return submissions;
-    }
+//    public List<Submission> getSubmissions(Classes classes) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User principal = (User) authentication.getPrincipal();
+//        List<Submission> submissions = new ArrayList<>();
+//        for (Classes classs : principal.getClasses()) {
+//            if (classes.getName().equals(classs.getName())) {
+//                List<Submission> allByCourseWorkName = submissionRepository.findAllByCourseWorkName(classes.getName());
+//                submissions.addAll(allByCourseWorkName);
+//            }
+//        }
+//        return submissions;
+//    }
 
     public ApiResponse getSubmission(Integer id) {
         Optional<Submission> optional = submissionRepository.findById(id);

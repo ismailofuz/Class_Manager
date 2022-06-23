@@ -24,10 +24,10 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    @GetMapping
-    public List<Message> getMessages() {
-        return messageService.getMessages();
-    }
+//    @GetMapping
+//    public List<Message> getMessages() {
+//        return messageService.getMessages();
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Message> getMessage(@PathVariable Long id) {

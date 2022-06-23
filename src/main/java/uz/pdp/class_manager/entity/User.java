@@ -26,7 +26,7 @@ import java.util.List;
 @Transactional
 public class User implements UserDetails {
 
-    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role, List<Classes> classes) {
+    public User(String firstName, String lastName, String username, String password, String email, RoleEnum role, Classes classes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id ;
+    private Integer id;
 
     @Column(nullable = false)
     private String firstName;
@@ -72,8 +72,8 @@ public class User implements UserDetails {
 //    @ElementCollection
 //    private List<String> subject_names;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Classes> classes;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Classes classes;
 
     @UpdateTimestamp
     private Timestamp last_updated_at;

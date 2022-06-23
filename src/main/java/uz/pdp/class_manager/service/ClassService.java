@@ -27,21 +27,22 @@ public class ClassService {
     public ApiResponse addClass(ClassDTO classDTO) {
         Optional<User> optionalUser = userRepository.findById(classDTO.getTeacherId());
         Optional<Classes> optional = classRepository.findByName(classDTO.getName());
+        List<User> users = new ArrayList<>();
+        users.add(optionalUser.get());
         if (optional.isPresent()) {
             return new ApiResponse("This class already exists", false);
         }
         if (optionalUser.isPresent()) {
             Classes newClass = new Classes();
             newClass.setName(classDTO.getName());
-            newClass.setTeacher(optionalUser.get());
+            newClass.setUsers(users);
             classRepository.save(newClass);
-            List<Classes> classesList = new ArrayList<>();
-            classesList.add(newClass);
-            optionalUser.get().setClasses(classesList);
+            optionalUser.get().setClasses(newClass);
             userRepository.save(optionalUser.get());
             return new ApiResponse("New class successfully created!", true);
+        } else {
+            return new ApiResponse("Teacher not found", false);
         }
-        return new ApiResponse("Teacher not found", false);
     }
 
     public ApiResponse addStudent(ClassDTO classDTO, Integer id) {
@@ -56,12 +57,10 @@ public class ClassService {
                     return new ApiResponse("This student already exists", false);
                 }
                 users.add(optionalStudent.get());
-                optionalClasses.get().setStudent(users);
-                classes.setStudent(users);
+                optionalClasses.get().setUsers(users);
+                classes.setUsers(users);
                 classRepository.save(classes);
-                List<Classes> classesList = new ArrayList<>();
-                classesList.add(classes);
-                optionalStudent.get().setClasses(classesList);
+                optionalStudent.get().setClasses(classes);
                 userRepository.save(optionalStudent.get());
             }
 

@@ -51,20 +51,20 @@ public class MessageService {
         return new ApiResponse("Successfully send message", true);
     }
 
-    public List<Message> getMessages() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        List<Message> messages = messageRepository.findAll();
-        List<Message> getMessages = new ArrayList<>();
-        if (user.getRole().equals(RoleEnum.STUDENT)){
-            for (Classes subject_name : user.getClasses()) {
-                for (Message message : messages) {
-                    if (subject_name.equals(message.getUser().getClasses().get(0))) {
-                        getMessages.add(message);
-                    }
-                }
-            }
-        }
-        return getMessages;
-    }
+//    public List<Message> getMessages() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User user = (User) authentication.getPrincipal();
+//        List<Message> messages = messageRepository.findAll();
+//        List<Message> getMessages = new ArrayList<>();
+//        if (user.getRole().equals(RoleEnum.STUDENT)){
+//            for (Classes subject_name : user.getClasses()) {
+//                for (Message message : messages) {
+//                    if (subject_name.equals(message.getUser().getClasses().get(0))) {
+//                        getMessages.add(message);
+//                    }
+//                }
+//            }
+//        }
+//        return getMessages;
+//    }
 }
