@@ -65,7 +65,7 @@ public class AuthController {
 
             String token = jwtProvider.generateToken(dto.getUsername());
 
-            apiResponse = new ApiResponse("Your token :" + token, true, principal);
+            apiResponse = new ApiResponse(token, true, principal);
 
 
         } catch (AuthenticationException e) {
