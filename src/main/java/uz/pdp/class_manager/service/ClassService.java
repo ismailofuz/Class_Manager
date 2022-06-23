@@ -56,11 +56,15 @@ public class ClassService {
                     return new ApiResponse("This student already exists", false);
                 }
                 users.add(optionalStudent.get());
-                optionalStudent.get().setClasses(new ArrayList<>(Arrays.asList(optionalClasses.get())));
+                optionalClasses.get().setStudent(users);
+                classes.setStudent(users);
+                classRepository.save(classes);
+                List<Classes> classesList = new ArrayList<>();
+                classesList.add(classes);
+                optionalStudent.get().setClasses(classesList);
                 userRepository.save(optionalStudent.get());
             }
-            optionalClasses.get().setStudent(users);
-            classRepository.save(classes);
+
             return new ApiResponse("Student(s) successfully added to class", true);
         }
         return new ApiResponse("Class not found", false);
